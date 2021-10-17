@@ -130,6 +130,6 @@ img {
   height: 200px; */
 }
 
-#crop-image {
+#crop-image, #dowload {
   display: none;
 }

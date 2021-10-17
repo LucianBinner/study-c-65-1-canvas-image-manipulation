@@ -65,3 +65,13 @@
 * [x] Adicionar a imagem cropada ao contexto do canvas
 * [x] Esconder a ferramenta de seleção
 * [x] Atualizar o preview da imagem
+
+## Download da imagem
+* [x] Criar elemento button#download
+* [x] Mostrar elemento após o corte da imagem
+* [x] Adicionar evento de 'click' ao botão
+* [x] Criar funcionalidade de dowload
+  * [x] Criar elemento a
+  * [x] Adicionar o nome da foto (modificado) à propriede dowload
+  * [x] Adicionar canvas.toDataURL() ao atributo href
+  * [x] Clicar no elemento

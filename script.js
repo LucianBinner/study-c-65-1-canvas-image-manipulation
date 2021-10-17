@@ -1,6 +1,7 @@
 let photoFile = document.getElementById('photo-file')
 let photoPreview = document.getElementById('photo-preview')
-let image = new Image()
+let image
+let photoName
 
 // Select and preview image
 document
@@ -12,10 +13,13 @@ document
 window.addEventListener('DOMContentLoaded', () => { // Executar depois que a DOM é carregada
   photoFile.addEventListener('change', () => {
     let file = photoFile.files.item(0) // Pegando a foto carregada 
+    photoName = file.name
     let reader = new FileReader()  // Leito de arquivo no HTML
     reader.readAsDataURL(file)
     reader.onload = (event) => {
+      image = new Image()
       image.src = event.target.result // Atribui o target da imagem carregada ao elemento image
+      image.onload = onLoadImage
     }
   })
 })
@@ -72,7 +76,7 @@ Object.keys(events).forEach(eventName => {
 let canvas = document.createElement('canvas') // Criando o elemento do canvas
 let ctx = canvas.getContext('2d') // Contexto do canvas
 
-image.onload = () => {
+function onLoadImage() {
   let { width, height } = image
   canvas.width = width
   canvas.height = height
@@ -124,4 +128,15 @@ cropButton.onclick = () => {
   selection.style.display = 'none'
   // Atualizar o preview da imagem
   photoPreview.src = canvas.toDataURL()
+  // Mostrar botão de dowload
+  dowloadButton.style.display = 'initial'
+}
+
+// Botão de dowload
+let dowloadButton = document.getElementById('dowload')
+dowloadButton.onclick = () => {
+  const a = document.createElement('a')
+  a.download = photoName + '-cropped.png'
+  a.href = canvas.toDataURL()
+  a.click()
 }
