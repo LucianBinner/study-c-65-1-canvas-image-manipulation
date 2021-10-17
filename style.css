@@ -111,3 +111,6 @@ img {
 
 
 /* Image Crop */
+#photo-file {
+    display: none;
+}
