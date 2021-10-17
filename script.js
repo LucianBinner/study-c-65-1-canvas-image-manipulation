@@ -1,5 +1,6 @@
 const photoFile = document.getElementById('photo-file')
-const image = document.getElementById('photo-preview')
+const photoPreview = document.getElementById('photo-preview')
+const image = new Image()
 
 // Select and preview image
 document
@@ -57,5 +58,24 @@ const events = {
 }
 
 Object.keys(events).forEach(eventName => {
-  image.addEventListener(eventName, events[eventName]) // Passa cada um dos eventos de mouse para o elemento image 'photo-preview', forma simplificada para não ficar passando um por um
+  photoPreview.addEventListener(eventName, events[eventName]) // Passa cada um dos eventos de mouse para o elemento image 'photo-preview', forma simplificada para não ficar passando um por um
 })
+
+// Canvas
+let canvas = document.createElement('canvas') // Criando o elemento do canvas
+let ctx = canvas.getContext('2d') // Contexto do canvas
+
+image.onload = () => {
+  const { width, height } = image
+  canvas.width = width
+  canvas.height = height
+
+  // Limpar o contexto
+  ctx.clearRect(0, 0, width, height)
+
+  // Desenar a imagem no contexto do canvas
+  ctx.drawImage(image, 0, 0)
+
+  // Atualizar o preview da imagem
+  photoPreview.src = canvas.toDataURL()
+}
