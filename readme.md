@@ -45,3 +45,23 @@
   * [x] Limpar o contexto
   * [x] Desenhar a imagem no contexto
   * [x] Atualizar o preview de imagem, agora, com o conteúdo do canvas ao invés da imagem
+
+## Cortar a imagem
+* [x] Adicionar element button#crop-image
+* [x] Mostrar somente quando finalizar a seleção
+* [x] Adicionar evento 'click' para quando clicar no botão
+* [x] Calcular corte proporcional ao tamanho da imagem na tela 
+  * [x] Calcular e armazenar o fator proporcional da imagem 
+    * [x] fatorWidth: divida a largura da foto pela largura do preview 
+    * [x] fatorHeight: divida a altura da foto pela altura do preview
+  * [x] Multiplicar a largura da selação pela divisão do fator de largura
+  * [x] Fazer o mesmo acima para altura
+* [x] Pegar do contexto do canvas, a região selecionada
+  * [x] Calcular e guardar a posição X e Y verdadeiras, para utilizar no ctx
+    * [x] Para pegar o X: Multiplicar a posição relativa do X pelo fatorWidth
+    * [x] Para pegar o Y: Multiplicar a posição relativa do Y pelo fatorHeight
+* [x] Limpar canvas
+* [x] Ajustar largura e altura do canvas e da imagem
+* [x] Adicionar a imagem cropada ao contexto do canvas
+* [x] Esconder a ferramenta de seleção
+* [x] Atualizar o preview da imagem

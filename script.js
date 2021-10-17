@@ -1,6 +1,6 @@
-const photoFile = document.getElementById('photo-file')
-const photoPreview = document.getElementById('photo-preview')
-const image = new Image()
+let photoFile = document.getElementById('photo-file')
+let photoPreview = document.getElementById('photo-preview')
+let image = new Image()
 
 // Select and preview image
 document
@@ -11,8 +11,8 @@ document
 
 window.addEventListener('DOMContentLoaded', () => { // Executar depois que a DOM é carregada
   photoFile.addEventListener('change', () => {
-    const file = photoFile.files.item(0) // Pegando a foto carregada 
-    const reader = new FileReader()  // Leito de arquivo no HTML
+    let file = photoFile.files.item(0) // Pegando a foto carregada 
+    let reader = new FileReader()  // Leito de arquivo no HTML
     reader.readAsDataURL(file)
     reader.onload = (event) => {
       image.src = event.target.result // Atribui o target da imagem carregada ao elemento image
@@ -21,16 +21,16 @@ window.addEventListener('DOMContentLoaded', () => { // Executar depois que a DOM
 })
 
 // Selection tool
-const selection = document.getElementById('selection-tool')
+let selection = document.getElementById('selection-tool')
 let startX, startY, relativeStartX, relativeStartY, endX, endY, relativeEndX, relativeEndY
 let startSelection = false
-const events = {
+let events = {
   mouseover() {
     // this neste contexto é quem esta disparando o evento ou seja o image
     this.style.cursor = 'crosshair'
   },
   mousedown() {
-    const { clientX, clientY, offsetX, offsetY } = event // Pega os eventos ocorridos
+    let { clientX, clientY, offsetX, offsetY } = event // Pega os eventos ocorridos
     startX = clientX
     startY = clientY
     relativeStartX = offsetX
@@ -38,7 +38,7 @@ const events = {
     startSelection = true
   },
   mousemove() {
-    const { clientX, clientY } = event
+    let { clientX, clientY } = event
     endX = clientX
     endY = clientY
     if (startSelection) {
@@ -50,10 +50,13 @@ const events = {
     }
   },
   mouseup() {
-    const { layerX, layerY } = event
+    let { layerX, layerY } = event
     startSelection = false
     relativeEndX = layerX
     relativeEndY = layerY
+
+    // Mostrar botão de corte
+    cropButton.style.display = 'initial'
   }
 }
 
@@ -61,12 +64,16 @@ Object.keys(events).forEach(eventName => {
   photoPreview.addEventListener(eventName, events[eventName]) // Passa cada um dos eventos de mouse para o elemento image 'photo-preview', forma simplificada para não ficar passando um por um
 })
 
+Object.keys(events).forEach(eventName => {
+  selection.addEventListener(eventName, events[eventName]) // Passa cada um dos eventos de mouse para o elemento image 'photo-preview', forma simplificada para não ficar passando um por um
+})
+
 // Canvas
 let canvas = document.createElement('canvas') // Criando o elemento do canvas
 let ctx = canvas.getContext('2d') // Contexto do canvas
 
 image.onload = () => {
-  const { width, height } = image
+  let { width, height } = image
   canvas.width = width
   canvas.height = height
 
@@ -76,6 +83,45 @@ image.onload = () => {
   // Desenar a imagem no contexto do canvas
   ctx.drawImage(image, 0, 0)
 
+  // Atualizar o preview da imagem
+  photoPreview.src = canvas.toDataURL()
+}
+
+// Crop Image
+let cropButton = document.getElementById('crop-image')
+cropButton.onclick = () => {
+  let { width: imgW, height: imgH } = image
+  let { width: previewW, height: previewH } = photoPreview
+  // Pegando o fator de largura e altura de imagem em relação ao preview com a selação
+  let [widthFactor, heightFactor] = [
+    +(imgW / previewW),
+    +(imgH / previewH)
+  ]
+  // Pegando o tamanho do quadro de seção
+  let [selectionWidth, selectionHeight] = [
+    +selection.style.width.replace('px', ''),
+    +selection.style.height.replace('px', ''),
+  ]
+  // Pegando o tamanho do corte da imagem
+  let [croppedWidth, croppedHeight] = [
+    +(selectionWidth * widthFactor),
+    +(selectionHeight * heightFactor)
+  ]
+  let [actualX, actualY] = [
+    +(relativeStartX * widthFactor),
+    +(relativeStartY * heightFactor)
+  ]
+  // Pegar do contexto do canvas as regiões de corte da imagem
+  let croppedImage = ctx.getImageData(actualX, actualY, croppedWidth, croppedHeight)
+  // Limpar o contexto do canvas
+  ctx.clearRect(0, 0, ctx.width, ctx.height)
+  // Ajustar de proporções do canvas
+  image.width = canvas.width = croppedWidth
+  image.height = canvas.height = croppedHeight
+  // Adicionar imagem cortada ao contexto do canvas
+  ctx.putImageData(croppedImage, 0, 0)
+  // Esconder a ferramenta de seleção
+  selection.style.display = 'none'
   // Atualizar o preview da imagem
   photoPreview.src = canvas.toDataURL()
 }
